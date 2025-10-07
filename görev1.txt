@@ -81,3 +81,30 @@ BAŞLA:
         göster_mesaj("Skor: " + SKOR + " (Yüksek Skor: " + YÜKSEK_SKOR + ")")
 
     ÇIKIŞ
+
+
+ === YAPAY ZEKA İLE KONUŞMA ===
+
+Bu belge, bir favori oyunda yüksek skor (High Score) elde etmeyi amaçlayan, koşullu durumları ve tekrar eden işlemleri içeren detaylı bir algoritmanın (Pseudocode) geliştirilme sürecini ve nihai çıktısını sunar.
+
+---
+
+## 1. İlk İstek ve Algoritma Taslağı
+
+**Kullanıcı:** Favori oyunda yüksek skor alma algoritması için adım adım algoritma geliştirmek istiyorum. Koşullu durumları ve tekrar eden işlemleri de içeren detaylı bir pseudocode yazmama yardım eder misin?
+
+**(Bu noktada, AI, algoritmanın temel yapısını - Başlangıç, Ana Döngü ve Fonksiyonlar - içeren detaylı bir taslak sunmuştur.)**
+
+---
+
+## 2. Parçaların Birleştirilmesi İsteği
+
+**Kullanıcı:** Verdiğin ayrı ayrı algoritmaları birleştirip verebilir misin?
+
+**(Bu istek üzerine, AI tüm parçaları tek bir bütünleşik pseudocode bloğu haline getirmiştir.)**
+
+---
+
+## 3. Nihai Çıktı: Bütünleşik Yüksek Skor Algoritması Pseudocode
+
+Yukarıdaki pseudocode, oyunun ana döngüsünü (`TEKRARLA`) içerir ve skor kazanımı, seviye atlama, can kaybı kontrolü ve yüksek skor kayıt işlemleri gibi tüm kritik işlemleri yönetir.
