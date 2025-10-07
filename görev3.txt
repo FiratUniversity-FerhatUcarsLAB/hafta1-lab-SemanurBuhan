@@ -1,0 +1,149 @@
+Öğrenci No: 250541007
+AD-SOYAD: SEMANUR BUHAN 
+
+GÖREV-3 MÜZİK KOLEKSİYONU DÜZENLEME
+
+// 1. VERİ YAPILANDIRMASI VE BAŞLANGIÇ DEĞİŞKENLERİ
+YAPI MÜZİK_NESNESİ:
+    ID: Benzersiz Tam Sayı
+    Sanatci: Dize
+    Album: Dize
+    Baslik: Dize
+    Sure: Tam Sayı (Saniye)
+    EklenmeTarihi: Tarih
+    Derecelendirme: Tam Sayı (1-5)
+    
+DEĞİŞKENLER:
+    DOSYA_DİZİNİ = "/Kullanici/Muziklerim/" 
+    MÜZİK_KOLEKSİYONU = YENİ_KARMA_TABLO() // Anahtar: ID, Değer: MÜZİK_NESNESİ
+    HATA_LİSTESİ = YENİ_LİSTE()
+    ID_SAYACI = 1
+
+// ----------------------------------------------------
+// 2. TARAMA VE VERİ YAPILANDIRMA
+// ----------------------------------------------------
+FONKSİYON TARAMA_VE_YAPILANDIRMA(DİZİN):
+    DOSYALAR = DİZİNDEKİ_TÜM_DOSYALARI_LİSTELE(DİZİN, ".mp3", ".flac")
+
+    HER_DOSYA_İÇİN (DOSYALAR):
+        META_VERİLERİ = OKU_ID3_ETİKETLERİ(DOSYA.YOLU)
+
+        EĞER (META_VERİLERİ EKSİK İSE):
+            LİSTEYE_EKLE(HATA_LİSTESİ, DOSYA.YOLU)
+            SONUÇ: devam_et 
+
+        YENİ_MÜZİK = YENİ_MÜZİK_NESNESİ(
+            ID = ID_SAYACI,
+            Sanatci = META_VERİLERİ.Sanatci,
+            Album = META_VERİLERİ.Album,
+            Baslik = META_VERİLERİ.Baslik,
+            // ... diğer alanlar
+            EklenmeTarihi = BUGÜN()
+        )
+        // Karma Tabloya Ekleme (Hızlı Arama için temel)
+        MÜZİK_KOLEKSİYONU.EKLE(ID_SAYACI, YENİ_MÜZİK)
+        ID_SAYACI = ID_SAYACI + 1
+    GERİ_DÖN MÜZİK_KOLEKSİYONU
+
+// ----------------------------------------------------
+// 3. SIRALAMA ALGORİTMASI (MERGE SORT MANTIĞI)
+// ----------------------------------------------------
+FONKSİYON MÜZİK_LİSTESİNİ_SIRALA(SIRALAMA_KRİTERİ):
+    SIRALANACAK_LİSTE = MÜZİK_KOLEKSİYONU.DEĞERLERİ_LİSTEYE_ÇEVİR()
+    GERİ_DÖN MERGE_SORT(SIRALANACAK_LİSTE, SIRALAMA_KRİTERİ)
+
+FONKSİYON MERGE_SORT(LİSTE, KRİTER):
+    EĞER (LİSTE.UZUNLUK <= 1):
+        GERİ_DÖN LİSTE 
+
+    ORTA = LİSTE.UZUNLUK / 2
+    SOL = MERGE_SORT(LİSTE.İLK_YARISI, KRİTER)  // Tekrar eden işlem
+    SAĞ = MERGE_SORT(LİSTE.İKİNCİ_YARISI, KRİTER) // Tekrar eden işlem
+
+    GERİ_DÖN BİRLEŞTİR(SOL, SAĞ, KRİTER)
+
+FONKSİYON BİRLEŞTİR(SOL, SAĞ, KRİTER):
+    BİRLEŞTİRİLMİŞ = BOŞ_LİSTE
+    TEKRARLA (SOL VE SAĞ BOŞ DEĞİLSE):
+        // Karşılaştırma Kriterleri mantığı:
+        EĞER (SOL[0] KRİTER'E GÖRE DAHA KÜÇÜK İSE SAĞ[0]'dan):
+            LİSTEYE_EKLE(BİRLEŞTİRİLMİŞ, SOL.ÇIKAR_İLK_ELEMAN())
+        AKSİ TAKDİRDE:
+            LİSTEYE_EKLE(BİRLEŞTİRİLMİŞ, SAĞ.ÇIKAR_İLK_ELEMAN())
+            
+    EKLE_TÜMÜ(BİRLEŞTİRİLMİŞ, SOL)
+    EKLE_TÜMÜ(BİRLEŞTİRİLMİŞ, SAĞ)
+    GERİ_DÖN BİRLEŞTİRİLMİŞ
+
+// ----------------------------------------------------
+// 4. ARAMA STRATEJİSİ (KARMA TABLO VE DOĞRUSAL ARAMA)
+// ----------------------------------------------------
+FONKSİYON MÜZİK_ARA(ARAMA_KRİTERİ, DEĞER):
+    SONUÇLAR = YENİ_LİSTE()
+
+    // Karma Tablo Hızlı Arama (O(1) veya O(k) )
+    EĞER (ARAMA_KRİTERİ == "ID"):
+        EĞER (MÜZİK_KOLEKSİYONU.İÇERİYOR(DEĞER)):
+            LİSTEYE_EKLE(SONUÇLAR, MÜZİK_KOLEKSİYONU.AL(DEĞER))
+            GERİ_DÖN SONUÇLAR
+    
+    // Doğrusal Arama (O(n) )
+    HER_ID_İÇİN (MÜZİK_KOLEKSİYONU.ANAHTARLARI):
+        MÜZİK = MÜZİK_KOLEKSİYONU.AL(ID)
+        
+        // Koşullu Karşılaştırma Kriterleri
+        EĞER (ARAMA_KRİTERİ == "SANATÇI" VE MÜZİK.Sanatci EŞİTTİR DEĞER):
+            LİSTEYE_EKLE(SONUÇLAR, MÜZİK)
+            
+        AKSİ TAKDİRDE EĞER (ARAMA_KRİTERİ == "DERECE" VE MÜZİK.Derecelendirme >= DEĞER):
+            LİSTEYE_EKLE(SONUÇLAR, MÜZİK)
+            
+    GERİ_DÖN SONUÇLAR
+
+// ----------------------------------------------------
+// 5. ANA PROGRAM AKIŞI
+// ----------------------------------------------------
+ANA_PROGRAM:
+    // Koleksiyonu Yapılandır
+    KOLEKSİYON = ÇAĞIR TARAMA_VE_YAPILANDIRMA(DOSYA_DİZİNİ)
+    
+    // Koleksiyonu Sanatçıya Göre Sırala
+    SIRALI_LİSTE = ÇAĞIR MÜZİK_LİSTESİNİ_SIRALA("Sanatci")
+    GÖSTER_LİSTE("Sanatçıya Göre Sıralı Liste", SIRALI_LİSTE.İLK_10_ELEMAN)
+
+    // Yüksek Dereceli Şarkıları Ara
+    YÜKSEK_DERECE_SONUÇLARI = ÇAĞIR MÜZİK_ARA("DERECE", 5)
+    GÖSTER_LİSTE("5 Yıldızlı Şarkılar", YÜKSEK_DERECE_SONUÇLARI)
+
+    // Eksik/Hatalı dosyaları kontrol et
+    EĞER (HATA_LİSTESİ.UZUNLUK > 0):
+        GÖSTER_UYARI("HATA: " + HATA_LİSTESİ.UZUNLUK + " dosyanın etiketleri eksik.")
+
+=== YAPAY ZEKAYLA KONUŞMA ===
+
+# Geliştirme Kaydı: Müzik Koleksiyonu Yönetim Sistemi (MKYS) Algoritması
+
+Bu belge, bir müzik koleksiyonunu düzenlemek için gerekli olan **tarama, veri yapılandırma, sıralama (Merge Sort)** ve **arama (Hash/Linear Search)** işlemlerini kapsayan algoritmik sistemin geliştirilme sürecini ve nihai pseudocode çıktısını içermektedir.
+
+## 1. İlk İstek: Müzik Koleksiyonu Algoritması Taslağı
+
+**Kullanıcı İstekleri:**
+1.  Müzik koleksiyonu düzenleme için adım adım algoritma geliştirilmesi.
+2.  Sıralama ve tarama, sıralama algoritmaları mantığı, arama stratejileri ve veri yapılandırma kriterlerinin dahil edilmesi.
+
+**(Bu aşamada Karma Tablo (Hash Table) tabanlı veri yapısı, Merge Sort mantığı ve Karma/Doğrusal arama stratejilerini içeren ilk detaylı taslak oluşturulmuştur.)**
+
+---
+
+## 2. Nihai Çıktı: Tüm Parçaların Birleştirilmesi
+
+**Kullanıcı İstekleri:**
+1.  Geliştirilen 5 kodu (Veri Yapısı, Tarama, Sıralama, Arama, Ana Akış) tek bir format halinde birleştirilmesi.
+
+**(Bu son istek üzerine, tüm fonksiyonlar ve yapılar tek, bütünleşik bir pseudocode bloğu haline getirilmiştir.)**
+
+---
+
+## 3. Bütünleşik Müzik Koleksiyonu Yönetim Sistemi (MKYS) Pseudocode
+
+Bu algoritma, diskteki dosyaları tarayarak (O(n)), verileri bir **Karma Tabloya** yapılandırır (O(1) hızlı erişim), **Merge Sort** ile sıralar (O(n log n)) ve farklı kriterlerle arama yapar.
