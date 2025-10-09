@@ -1,4 +1,121 @@
-Öğrenci No:
-AD-SOYAD:
+Öğrenci No: 250541007
+AD-SOYAD: SEMANUR BUHAN
 
-Lütfen seçtiğiniz algoritmaya ait çözümü ve diğer isterleri aşağıya ekleyiniz:
+GÖREV-4 OTOBÜS ROTASI OPTİMİZASYONU
+
+// 1. VERİ YAPILARI VE BAŞLANGIÇ TANIMLAMALARI
+YAPI DURAK_NOKTASI:
+    ID: Tam Sayı
+    Konum: (Enlem, Boylam)
+    Talep: Tam Sayı // Yolcu sayısı
+
+DEĞİŞKENLER:
+    TÜM_DURAKLAR = Liste<DURAK_NOKTASI> 
+    MERKEZ_DEPO = DURAK_NOKTASI // Başlangıç/Bitiş noktası
+    MESAFE_MATRİSİ = Matris // Tüm duraklar arası mesafeler
+    MAKS_OTOBÜS_KAPASİTESİ = 40
+    MAKS_ROTA_SÜRESİ = 480 // Dakika (8 saat)
+
+// ----------------------------------------------------
+// 2. KARMAŞIK PROBLEMLERİ PARÇALARA BÖLME (Bölme Aşaması)
+// ----------------------------------------------------
+FONKSİYON BÖL_DURAKLARI(TÜM_DURAKLAR):
+    YÖNETİLEBİLİR_KÜMELER = YENİ_LİSTE()
+    GEÇİCİ_DURAKLAR = TÜM_DURAKLAR.KOPYALA() // Orijinali değiştirmemek için
+
+    TEKRARLA (GEÇİCİ_DURAKLAR BOŞ OLMAYANA KADAR):
+        ÇEKİRDEK = SEÇ_RASTGELE_VEYA_YOĞUN_DURAK(GEÇİCİ_DURAKLAR)
+        YENİ_KÜME = [ÇEKİRDEK]
+        KÜME_TALEP = ÇEKİRDEK.Talep
+        GEÇİCİ_DURAKLAR.KALDIR(ÇEKİRDEK)
+        
+        TEKRARLA (DOĞRU): // Küme dolana kadar devam et
+            EN_YAKIN_VE_UYGUN = BUL_EN_YAKIN_VE_UYGUN_DURAK(YENİ_KÜME, GEÇİCİ_DURAKLAR)
+            
+            EĞER (EN_YAKIN_VE_UYGUN BOŞ İSE VEYA (KÜME_TALEP + EN_YAKIN_VE_UYGUN.Talep) > MAKS_OTOBÜS_KAPASİTESİ):
+                KESME_NOKTASI: devam_et // Kapasite doldu veya uygun durak kalmadı
+            
+            YENİ_KÜME.EKLE(EN_YAKIN_VE_UYGUN)
+            KÜME_TALEP = KÜME_TALEP + EN_YAKIN_VE_UYGUN.Talep
+            GEÇİCİ_DURAKLAR.KALDIR(EN_YAKIN_VE_UYGUN)
+
+        YÖNETİLEBİLİR_KÜMELER.EKLE(YENİ_KÜME)
+
+    GERİ_DÖN YÖNETİLEBİLİR_KÜMELER
+
+// ----------------------------------------------------
+// 3. PARÇALARI FETHETME VE OPTİMİZASYON (Fethetme Aşaması)
+// ----------------------------------------------------
+FONKSİYON FETİH_VE_OPTİMİZE_ET(KÜME):
+    KÜME.EKLE_BAŞLANGIÇ(MERKEZ_DEPO)
+    KÜME.EKLE_BİTİŞ(MERKEZ_DEPO)
+    
+    // Yerel Optimizasyon Heuristiği (Örn: 2-opt)
+    EN_İYİ_ROTA = ROTAYI_BULMAK_İÇİN_HEURİSTİK_KULLAN(KÜME)
+    
+    TEKRARLA (İYİLEŞTİRME_BULUNANA_KADAR):
+        YENİ_ROTA = UYGULA_2_OPT_DEĞİŞİMİ(EN_İYİ_ROTA, MESAFE_MATRİSİ)
+        
+        EĞER (HESAPLA_ROTA_MESAFESİ(YENİ_ROTA) < HESAPLA_ROTA_MESAFESİ(EN_İYİ_ROTA)):
+            EN_İYİ_ROTA = YENİ_ROTA // Optimizasyon Düşüncesi
+        AKSİ TAKDİRDE:
+            KESME_NOKTASI: devam_et
+
+    // Kenar Durum (Edge Case) Kontrolü
+    EĞER (HESAPLA_ROTA_SÜRESİ(EN_İYİ_ROTA) > MAKS_ROTA_SÜRESİ):
+        // Eğer süre aşıyorsa, küme çok büyük demektir, daha fazla bölmek gerekir.
+        GEREKİYORSA_KÜMEYİ_YENİDEN_BÖL_VEYA_UYAR(KÜME)
+        
+    GERİ_DÖN EN_İYİ_ROTA
+
+// ----------------------------------------------------
+// 4. ANA PROGRAM AKIŞI
+// ----------------------------------------------------
+ANA_PROGRAM:
+    // Sistematik Yaklaşım: Veri Hazırlığı
+    MESAFE_MATRİSİ = OLUŞTUR_MESAFE_MATRİSİ(TÜM_DURAKLAR, MERKEZ_DEPO)
+    
+    // Bölme Aşaması
+    KÜMELER = ÇAĞIR BÖL_DURAKLARI(TÜM_DURAKLAR) 
+    
+    NİHAİ_ROTA_SETİ = YENİ_LİSTE()
+    
+    // Fethetme ve Birleştirme Aşaması (Her küme bir otobüs rotasıdır)
+    HER_KÜME_İÇİN (KÜMELER):
+        ROTA = ÇAĞIR FETİH_VE_OPTİMİZE_ET(KÜME) 
+        NİHAİ_ROTA_SETİ.EKLE(ROTA)
+
+    // Sistematik Yaklaşım: Performans Kaydı
+    KAYDET_PERFORMANS_LOGU(HESAPLA_TOPLAM_MESAFE(NİHAİ_ROTA_SETİ))
+    
+    GÖSTER_ROTA_SETİ(NİHAİ_ROTA_SETİ)
+
+=== YAPAY ZEKAYLA KONUŞMA ===
+
+# Geliştirme Kaydı: Otobüs Rotası Optimizasyonu (Böl ve Fethet) Algoritması
+
+Bu belge, karmaşık bir optimizasyon problemi olan **Araç Rotalama Problemini (VRP)** çözmek için, **Böl ve Fethet (Divide and Conquer)** mantığına dayalı sistematik bir algoritmanın geliştirilme sürecini ve nihai pseudocode çıktısını içermektedir.
+
+## 1. İlk İstek: Otobüs Rotası Optimizasyonu Taslağı
+
+**Kullanıcı İstekleri:**
+1.  Otobüs rotası optimizasyonu için adım adım algoritma geliştirilmesi.
+2.  **Karmaşık problemleri parçalara bölme, sistematik yaklaşım, optimizasyon düşüncesi** ve **edge case** kontrolü gibi becerileri içeren bir pseudocode.
+3.  **Böl ve Fethet** mantığının kavratılması.
+
+**(Bu aşamada VRP'yi çözmek için gerekli olan veri yapıları, Bölme Aşaması (Kümeleme), Fethetme Aşaması (Yerel Optimizasyon/2-opt) ve Kenar Durum kontrollerini içeren dört temel kod parçası geliştirilmiştir.)**
+
+---
+
+## 2. Nihai Çıktı: Tüm Kod Parçalarının Bütünleştirilmesi
+
+**Kullanıcı İstekleri:**
+1.  Geliştirilen dört sözde kodun da tek bir formatta birleştirilmesi.
+
+**(Bu son istek üzerine, tüm fonksiyonlar, veri yapıları ve ana akış, tek, bütünleşik bir pseudocode bloğu haline getirilmiştir.)**
+
+---
+
+## 3. Bütünleşik Otobüs Rotası Optimizasyonu Algoritması Pseudocode
+
+Bu algoritma, tüm durakları kapasite ve coğrafi yakınlığa göre yönetilebilir kümelere **BÖLER**, her kümede **Yerel Optimizasyon (FETİH)** uygular ve nihai rota setini oluşturur.
