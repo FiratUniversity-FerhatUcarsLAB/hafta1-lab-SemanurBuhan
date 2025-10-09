@@ -1,4 +1,84 @@
-Öğrenci No:
-AD-SOYAD:
+Öğrenci No:250541007
+AD-SOYAD:SEMANUR BUHAN
 
-Lütfen seçtiğiniz algoritmaya ait çözümü ve diğer isterleri aşağıya ekleyiniz:
+GÖREV 5: GÜNÜN HAVA DURUMUNA GÖRE EN UYGUN KIYAFETİ SEÇME ALGORİTMASI
+
+==== DEĞİŞKENLER ====
+hava durumu: Başla (yağmurlu,karlı,güneşli,bulutlu)
+sıcaklık:(sıcak,soğuk,ılık)
+aktivite türü:(okul, spor, evde, dışarı, düğün)
+seçilen kıyafet: Bitir
+
+==== BAŞLANGIÇ====
+BAŞLA
+
+  Hava durumu ve sıcaklık bilgisini al
+  EKRANA YAZ (Bugün hava durumu nasıl? (yağmurlu/karlı/güneşli/bulutlu): 
+  hava durumu <- kullanıcı girişi()
+  
+  EKRANA YAZ(Hava sıcaklığı kaç derece?: )
+  sıcaklık <- kullanıcı girişi()
+
+  EKRANA YAZ(Aktivite türünüz? (okul/spor/evde/dışarı/düğün):)
+  aktivite türü <- kullanıcı girişi ()
+ 
+ ===== HAVA DURUMU KONTROLÜ =====
+EĞER(hava durumu == yağmurlu veya karlı):
+seçilen kıyafet <- yağmurluk+şemsiye+bot
+
+DEĞİLSE
+ Sıcak hava göre karar al
+
+===== SICAKLIK KONTROLÜ =====
+EĞER sıcaklık > 25
+ EĞER aktivite türü == düğün :
+  seçilen kıyafet ← Hafif elbise + şık ayakkabı
+ DEĞİLSE EĞER aktivite türü == spor:
+ seçilen kıyafet ← Tişört + Şort + Spor ayakkabı
+
+  EKRANA YAZ( Hava sıcak , seçilen kıyafet)
+ 
+DEĞİLSE EĞER sıcaklık >= 15 ve <= 25
+EĞER aktivite türü == okul:
+        EKRANA YAZ(Okulda resmi kıyafet zorunlu mu? (evet/hayır):)
+        resmi mi ← kullanıcı girişi()
+        
+        EĞER resmi mi == evet:
+        seçilen kıyafet ← Gömlek + Pantolon+ Klasik ayakkabı
+        DEĞİLSE:
+        seçilen kıyafet ←Tişört + Kot pantolon + Spor ayakkabı
+      
+        DEĞİLSE EĞER aktivite türü == spor:
+        seççilen kıyafet ← Eşofman + Sweatshirt + Spor ayakkabı
+      
+        DEĞİLSE EĞER aktivite türü == düğün:
+        seçilen kıyafet ← Şık elbise + Stiletto
+      
+        DEĞİLSE EĞER aktivite türü == evde:
+        seçilen kıyafet ← Pijama
+      
+      
+      EKRANA YAZ(Hava ılık! ,  seçilen kıyafet)
+
+DEĞİLSE EĞER sıcaklık < 15
+  EĞER aktivite türü == okul:
+  seçilen kıyafet ← Kazak + Pantolon + Mont + Bot
+      
+  DEĞİLSE EĞER aktivite türü == "spor":
+   secilenKiyafet ←  Eşofman + Spor ayakkabı
+      
+  DEĞİLSE EĞER aktivite türü  == "düğün":
+   seçilen kıyafet ← Elbise + Palto + Şık Ayakkabı
+      
+   DEĞİLSE EĞER aktivite türü == evde:
+   secilen Kiyafet ← Kalın eşofman
+    
+        EKRANA_YAZ( Hava soğuk , secilen Kiyafet)
+
+
+  ===== SONUÇ =====
+  EKRANA YAZ ( Kıyafet seçildi)
+
+BİTİR
+
+
