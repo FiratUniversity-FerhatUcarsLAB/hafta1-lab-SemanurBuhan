@@ -1,4 +1,120 @@
-Öğrenci No:
-AD-SOYAD:
+Öğrenci No: 250541007
+AD-SOYAD: SEMANUR BUHAN
 
-Lütfen seçtiğiniz algoritmaya ait çözümü ve diğer isterleri aşağıya ekleyiniz:
+GÖREV-2 Monopoly'de En İyi Hamle Algoritması
+
+DEĞİŞKENLER:
+    NAKİT_GÜVENLİK_REZERVİ = 400   // Likidite kontrolü eşiği
+    RISK_TOLERANSI = 2.0             // 1.0 (çekingen) - 5.0 (agresif) arası ayarlanabilir
+    
+SABİTLER:
+    TEKEL_BONUSU_ÇARPAN = 500       // Tekeli tamamlamanın anlık değeri
+    DURMA_OLASILIKLARI = MARKOV_ZİNCİRİ_OLASILIKLARI() // Tahtadaki her kareye gelme olasılığı
+    RİSK_FAKTÖRÜ = 1.2               // Kaybın cezalandırma çarpanı
+BAŞLA:
+    TEKRARLA (Oyun_Devam_Ediyor DOĞRU olduğu sürece):
+
+        // 2.1 Oyuncu Girişi (Koşullu İşlem)
+        GİRİŞ = oku_oyuncu_girişi() // Klavye, fare, gamepad vb.
+
+        EĞER (GİRİŞ == "ATEŞ"):
+            işle_ateş_etme()
+        EĞER (GİRİŞ == "ÖZEL_GÜÇ_KULLAN" VE ÖZEL_GÜÇ_AKTİF == DOĞRU):
+            aktive_et_özel_güç()
+            ÖZEL_GÜÇ_AKTİF = YANLIŞ
+        
+        // 2.2 Oyun Durumunun Güncellenmesi
+        güncelle_düşman_konumları()
+        güncelle_mermi_konumları()
+        
+        // 2.3 Çarpışma Kontrolü (Tekrar Eden ve Koşullu İşlemler)
+        // Yüksek skorun ana kaynağı
+        
+        HER_MERMİ_İÇİN (Oyun_Alanındaki_Mermiler):
+            HER_DÜŞMAN_İÇİN (Oyun_Alanındaki_Düşmanlar):
+                EĞER (çarpışma_var(MERMİ, DÜŞMAN)):
+                    DÜŞMAN.durum = "YOK_EDİLDİ"
+                    MERMİ.durum = "YOK_EDİLDİ"
+                    SKOR = SKOR + DÜŞMAN_YOK_ETME_SKORU * SEVİYE 
+                    KONTROL_SKOR_EŞİĞİ(SKOR) // Alt bölüm 3'e bak
+                    SONUÇ: devam_et
+
+        // 2.4 Oyuncu Hasar Kontrolü (Koşullu Durum)
+
+        EĞER (oyuncu_hasar_aldı()):
+            CAN = CAN - 1
+            oynat_hasar_animasyonu()
+
+            EĞER (CAN <= CAN_KAYBI_TEHLİKE_EŞİĞİ):
+                göster_uyarı_mesajı("DİKKAT: Canın Çok Az!")
+
+        // 2.5 Oyun Sonu Kontrolü (Koşullu Çıkış)
+
+        EĞER (CAN <= 0):
+            Oyun_Devam_Ediyor = YANLIŞ // Döngüyü sonlandır
+            
+    // TEKRARLA döngüsü sonu
+
+    GÖSTER_YÜKSEK_SKOR_EKRANI()
+    kontrol_ve_kaydet_yüksek_skor(SKOR, YÜKSEK_SKOR) // Alt bölüm 4'e bak
+    ÇIKIŞ
+FONKSİYON KONTROL_SKOR_EŞİĞİ(MEVCUT_SKOR):
+
+    // 3.1 Seviye Atlama Kontrolü (Tekrarlayan Kontrol)
+    EĞER (MEVCUT_SKOR >= SEVİYE * YENİ_SEVİYE_SKOR_EŞİĞİ):
+        SEVİYE = SEVİYE + 1
+        göster_mesaj("SEVİYE ATLANDI: " + SEVİYE)
+        // Seviye artınca zorluk artar
+        DÜŞMAN_YOK_ETME_SKORU = DÜŞMAN_YOK_ETME_SKORU + 25 
+        çoğalt_düşman_sayısı()
+
+    // 3.2 Özel Güç Kontrolü (Koşullu Kontrol)
+    EĞER (MEVCUT_SKOR MOD 1000 == 0): // Her 1000 skorda bir
+        ÖZEL_GÜÇ_AKTİF = DOĞRU
+        göster_mesaj("ÖZEL GÜÇ KAZANDIN!")
+FONKSİYON kontrol_ve_kaydet_yüksek_skor(MEVCUT_SKOR, KAYITLI_YÜKSEK_SKOR):
+
+    // 4.1 Yüksek Skor Karşılaştırması (Koşullu Durum)
+    EĞER (MEVCUT_SKOR > KAYITLI_YÜKSEK_SKOR):
+        YENİ_YÜKSEK_SKOR = MEVCUT_SKOR
+        kaydet_yeni_yüksek_skor(YENİ_YÜKSEK_SKOR)
+        göster_mesaj("YENİ YÜKSEK SKOR: " + YENİ_YÜKSEK_SKOR + "!")
+    AKSİ TAKDİRDE:
+        göster_mesaj("Skor: " + MEVCUT_SKOR + " (Yüksek Skor: " + KAYITLI_YÜKSEK_SKOR + ")")
+
+=== YAPAY ZEKA İLE KONUŞMA ===
+# Geliştirme Kaydı: Monopoly Optimal Karar Sistemi Algoritması
+
+Bu belge, favori bir oyunda (Monopoly) yüksek skor ve optimal strateji geliştirmeye odaklanan bir yapay zeka (AI) karar algoritmasının adım adım geliştirme sürecini ve nihai pseudocode çıktısını içermektedir.
+
+**Kullanıcı İstekleri:**
+1.  Oyun Stratejisi Algoritması Görevi'nin (Görüntüde sunulan) açıklanması.
+2.  Seçilen oyun: **Monopoly'de en iyi hamle seçimi** algoritması. (Karar mantığı, öngörme, optimal strateji, risk değerlendirme odaklı.)
+
+**(Bu aşamada Monopoly için temel karar verme mantığı (Mülk Değerlendirme, Ticaret Öngörüsü) ve optimal inşaat kuralları geliştirildi.)**
+
+---
+
+## 3. Derinlemesine Analiz ve Risk/Fayda Puanlaması
+
+**Kullanıcı İstekleri:**
+1.  Hamlelerin değerini **kira potansiyeli, nakit durumu ve rakip konumuna** göre değerlendiren pseudocode ve puanlama mantığı.
+2.  Her hamle için olası **risk ve kazanç senaryolarını** hesaplayan ve **risk/fayda puanına** göre sıralayan bir algoritma. (Örnek bir oyun durumu ile çalışma gösterildi.)
+
+**(Bu aşamada `HESAPLA_RİSK_FAYDA_PUANI` fonksiyonu ve sıralama algoritması oluşturularak, karar mekanizması derinleştirildi.)**
+
+---
+
+## 4. Algoritmik Yaklaşımların Çeşitlendirilmesi ve Bütünleştirilmesi
+
+**Kullanıcı İstekleri:**
+1.  En az 3 farklı algoritmik yaklaşım (Markov Tabanlı, MCTS Simülasyonu, Hibrit Risk Toleransı) üretilmesi, pseudocode, avantaj/dezavantaj ve örnek çalışma sunulması.
+2.  **Tüm pseudocode'ların algoritmaların yapısına uygun olarak tek parça haline getirilmesi.**
+
+**(Bu aşama, projenin nihai çıktısıdır ve tüm geliştirilen mantığı (EV, Likidite, Risk) tek bir `Hibrit Risk Toleransı Modeli` çatısı altında birleştirir.)**
+
+---
+
+## 5. Nihai Çıktı: Bütünleşik Monopoly Optimal Karar Sistemi
+
+Bu algoritma, oyun durumunu sürekli olarak değerlendirir ve **Beklenen Değer (Markov)** ile **Anlık Risk/Likiditeyi** birleştirerek en yüksek Risk/Fayda Puanına sahip optimal hamleyi seçer.
