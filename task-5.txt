@@ -32,46 +32,46 @@ DEĞİLSE
 ===== SICAKLIK KONTROLÜ =====
 EĞER sıcaklık > 25
  EĞER aktivite türü == düğün :
-  seçilen kıyafet ← Hafif elbise + şık ayakkabı
+  seçilen kıyafet <- Hafif elbise + şık ayakkabı
  DEĞİLSE EĞER aktivite türü == spor:
- seçilen kıyafet ← Tişört + Şort + Spor ayakkabı
+ seçilen kıyafet <- Tişört + Şort + Spor ayakkabı
 
   EKRANA YAZ( Hava sıcak , seçilen kıyafet)
  
 DEĞİLSE EĞER sıcaklık >= 15 ve <= 25
 EĞER aktivite türü == okul:
         EKRANA YAZ(Okulda resmi kıyafet zorunlu mu? (evet/hayır):)
-        resmi mi ← kullanıcı girişi()
+        resmi mi <- kullanıcı girişi()
         
         EĞER resmi mi == evet:
-        seçilen kıyafet ← Gömlek + Pantolon+ Klasik ayakkabı
+        seçilen kıyafet <- Gömlek + Pantolon+ Klasik ayakkabı
         DEĞİLSE:
-        seçilen kıyafet ←Tişört + Kot pantolon + Spor ayakkabı
+        seçilen kıyafet<-Tişört + Kot pantolon + Spor ayakkabı
       
         DEĞİLSE EĞER aktivite türü == spor:
-        seççilen kıyafet ← Eşofman + Sweatshirt + Spor ayakkabı
+        seççilen kıyafet <- Eşofman + Sweatshirt + Spor ayakkabı
       
         DEĞİLSE EĞER aktivite türü == düğün:
-        seçilen kıyafet ← Şık elbise + Stiletto
+        seçilen kıyafet <- Şık elbise + Stiletto
       
         DEĞİLSE EĞER aktivite türü == evde:
-        seçilen kıyafet ← Pijama
+        seçilen kıyafet <- Pijama
       
       
       EKRANA YAZ(Hava ılık! ,  seçilen kıyafet)
 
 DEĞİLSE EĞER sıcaklık < 15
   EĞER aktivite türü == okul:
-  seçilen kıyafet ← Kazak + Pantolon + Mont + Bot
+  seçilen kıyafet <- Kazak + Pantolon + Mont + Bot
       
   DEĞİLSE EĞER aktivite türü == "spor":
-   secilenKiyafet ←  Eşofman + Spor ayakkabı
+   secilenKiyafet <-  Eşofman + Spor ayakkabı
       
   DEĞİLSE EĞER aktivite türü  == "düğün":
-   seçilen kıyafet ← Elbise + Palto + Şık Ayakkabı
+   seçilen kıyafet<- Elbise + Palto + Şık Ayakkabı
       
    DEĞİLSE EĞER aktivite türü == evde:
-   secilen Kiyafet ← Kalın eşofman
+   secilen Kiyafet <- Kalın eşofman
     
         EKRANA_YAZ( Hava soğuk , secilen Kiyafet)
 
